@@ -9,16 +9,16 @@ Just load the viewer you want into the Lua Console you'll find under Tools in Bi
 
 ## NES
 
-![NES Viewer](https://lambdan.se/img/2020-06-12_17-40-47.png)
+![NES Viewer](https://lambdan.se/img/2020-06-12_18-58-03.059.gif)
 
 ## SFC and PAL SNES
 
-![SFC/PAL SNES](https://lambdan.se/img/2020-06-12_18-51-30.424.png)
+![SFC/PAL SNES](https://lambdan.se/img/2020-06-12_18-55-01.174.gif)
 
 ## SNES (US)
 
-![SNES (US)](https://lambdan.se/img/2020-06-12_18-51-30.410.png)
+![SNES (US)](https://lambdan.se/img/2020-06-12_18-54-20.688.gif)
 
 ## N64 (No D-pad, no L)
 
-![N64 Viewer](https://lambdan.se/img/2020-06-12_17-20-38.png)
+![N64 Viewer](https://lambdan.se/img/2020-06-12_19-01-54.079.gif)
