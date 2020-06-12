@@ -29,24 +29,24 @@ end
 function check_buttons(input)
 	-- For boxes: Top X, Top Y, Bottom X, Bottom Y
 	if input["Up"] then
-		forms.drawBox(pb, 30, 20, 50, 40, "gray", "gray") -- fill if pressed
+		forms.drawBox(pb, 30, 20, 50, 40, "gray", "white") -- fill if pressed
 	else
 		forms.drawBox(pb, 30, 20, 50, 40, "gray", "black") -- just outline if not
 	end
 	if input["Down"] then
-		forms.drawBox(pb, 30, 60, 50, 80, "gray", "gray")
+		forms.drawBox(pb, 30, 60, 50, 80, "gray", "white")
 	else
 		forms.drawBox(pb, 30, 60, 50, 80, "gray", "black")
 	end
 
 	if input["Left"] then
-		forms.drawBox(pb, 10, 40, 30, 60, "gray", "gray")
+		forms.drawBox(pb, 10, 40, 30, 60, "gray", "white")
 	else
 		forms.drawBox(pb, 10, 40, 30, 60, "gray", "black")
 	end
 
 	if input["Right"] then
-		forms.drawBox(pb, 50, 40, 70, 60, "gray", "gray")
+		forms.drawBox(pb, 50, 40, 70, 60, "gray", "white")
 	else
 		forms.drawBox(pb, 50, 40, 70, 60, "gray", "black")
 	end
@@ -64,15 +64,15 @@ function check_buttons(input)
 	end
 
 	if input["Select"] then
-		forms.drawBox(pb, 90, 60, 120, 70, "gray", "gray")
+		forms.drawBox(pb, 90, 60, 120, 70, "gray", "white")
 	else
-		forms.drawBox(pb, 90, 60, 120, 70, "gray", "black")
+		forms.drawBox(pb, 90, 60, 120, 70, "gray", 0xFF333333)
 	end
 
 	if input["Start"] then
-		forms.drawBox(pb, 140, 60, 170, 70, "gray", "gray")
+		forms.drawBox(pb, 140, 60, 170, 70, "gray", "white")
 	else
-		forms.drawBox(pb, 140, 60, 170, 70, "gray", "black")
+		forms.drawBox(pb, 140, 60, 170, 70, "gray", 0xFF333333)
 	end
 
 end
