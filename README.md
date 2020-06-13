@@ -21,4 +21,4 @@ Just load the viewer you want into the Lua Console you'll find under Tools in Bi
 
 ## N64 (No D-pad, no L)
 
-![N64 Viewer](https://lambdan.se/img/2020-06-12_19-01-54.079.gif)
+![N64 Viewer](https://lambdan.se/img/2020-06-13_13-43-51.289.gif)

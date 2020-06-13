@@ -22,61 +22,66 @@ function update_stick(x,y)
 	radius = (size/2)
 	stick_cap_size = (size/4)
 
+	-- center of the containing circle
 	center_x = top_corner_x + radius
 	center_y = top_corner_y + radius
 
-	-- set scale by looking at max value that stick gives
-	-- i just improvised this but *seems* to work fine?
-	if x > max_axis then
-		max_axis = x
-	elseif y > max_axis then
-		max_axis = y
-	end
-	scale_factor = (max_axis/size)
-
-	if x ~= 0 then -- to prevent divide by 0
-		x = x/scale_factor
-	end
-	if y ~= 0 then
-		y = y/scale_factor
-	end
-
-	-- check if inside circle
-	hypo = math.sqrt((x^2)+(y^2))
-	while hypo > radius do
-		if x > 0 then
-			x = x - 1
-		else
-			x = x + 1
-		end
-
-		if y > 0 then
-			y = y - 1
-		else
-			y = y + 1
-		end
-
-		hypo = math.sqrt((x^2)+(y^2))
-	end
-
 	if debug_stick then
-		forms.drawString(pb, 90, 0, "X=" .. tostring(x), "white") 
-		forms.drawString(pb, 90, 10, "Y=" .. tostring(y), "white")
-		forms.drawString(pb, 90, 42, "HYPO: " .. tostring(hypo), "yellow")
+		forms.drawString(pb, 0, 0, "IN " .. tostring(math.floor(x)) .. "," .. tostring(math.floor(y)), "white") 
+	end
+
+	-- check if this is a larger axis value than we've gotten before
+	if x > max_pos_axis_x then
+		max_pos_axis_x = x
+	elseif x < max_neg_axis_x then
+		max_neg_axis_x = x
+	end
+
+	if y > max_pos_axis_y then
+		max_pos_axis_y = y
+	elseif y < max_neg_axis_y then
+		max_neg_axis_y = y
+	end
+
+	-- scale movement to our known axis lengths
+	-- (in other words: 100% of axis = 100% of radius, 50% of axis = 50% of radius etc.)
+	if x > 0 then
+		x = x * (radius/max_pos_axis_x)
+	elseif x < 0 then
+		x = x * (radius/-max_neg_axis_x)
+	end
+	if y > 0 then
+		y = y * (radius/max_pos_axis_y)
+	elseif y < 0 then
+		y = y * (radius/-max_neg_axis_y)
+	end
+
+	-- make sure we are inside the containing circle (hypotenuse ("magnitude") of triangle x,y cannot be larger than radius)
+	-- inspiration from http://blog.hypersect.com/interpreting-analog-sticks/
+	magnitude = math.sqrt((x^2) + (y^2))
+	if magnitude > radius then
+		scale = radius/magnitude
+		x = x * scale
+		y = y * scale
 	end
 
 	-- add center offset (so neutral stick rests at the center and not 0,0 etc)
+	-- also invert y because less y is more up, and more y is more down in our window
 	x = x + center_x
 	y = (-y) + center_y
-		
-	forms.drawEllipse(pb, top_corner_x, top_corner_y, size, size, "gray") -- outer ring
-	forms.drawEllipse(pb, x-stick_cap_size, y-stick_cap_size, stick_cap_size*2, stick_cap_size*2, "gray", "gray") -- actual stick
-	forms.drawPixel(pb, x, y, "black") -- middle of stick
 
-	if debug_stick then
-		forms.drawLine(pb, center_x, center_y, x, y, "yellow") -- from center to point (hypotenuse)
+	-- draw containing circle
+	forms.drawEllipse(pb, top_corner_x, top_corner_y, size, size, "gray")
+	
+	if debug_stick then -- print all the debug info
+		forms.drawString(pb, 90, 0, "OUT " .. tostring(math.floor(x)) .. "," .. tostring(math.floor(y)), "white") 
+		forms.drawString(pb, 0, 90, "MAG: " .. tostring(magnitude), "yellow")
+		forms.drawLine(pb, center_x, center_y, x, y, "yellow") -- hypotenuse or magnitude
 		forms.drawLine(pb, center_x, center_y, x, center_y)
 		forms.drawLine(pb, x, y, x, center_y)
+	else -- use the big stick if not debugging (its kinda in the way)
+		forms.drawEllipse(pb, x-stick_cap_size, y-stick_cap_size, stick_cap_size*2, stick_cap_size*2, "gray", "gray") -- stick cap
+		forms.drawPixel(pb, x, y, "black") -- actual stick coordinate (black pixel in the middle)
 	end
 
 end
@@ -159,7 +164,11 @@ pb = forms.pictureBox(f, 0, 0, 300, 200);
 forms.setDefaultForegroundColor(pb,"white")
 forms.setDefaultBackgroundColor(pb,"black")
 
-max_axis = 64
+max_pos_axis_x = 1
+max_pos_axis_y = 1
+max_neg_axis_x = -1
+max_neg_axis_y = -1
+
 
 while true do
 	forms.clear(pb, "black")
