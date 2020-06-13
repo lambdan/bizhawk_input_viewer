@@ -14,7 +14,7 @@ function get_inputs(controller_index)
 	return input_array
 end
 
-function update_stick(x,y)
+function update_stick(in_x, in_y)
 	-- this should probably be separated into 2 functions, like calculate_stick_draw() and draw_stick()
 	top_corner_x = 20
 	top_corner_y = 20
@@ -26,62 +26,65 @@ function update_stick(x,y)
 	center_x = top_corner_x + radius
 	center_y = top_corner_y + radius
 
+	local out_x = 0
+	local out_y = 0
+
 	if debug_stick then
-		forms.drawString(pb, 0, 0, "IN " .. tostring(math.floor(x)) .. "," .. tostring(math.floor(y)), "white") 
+		forms.drawString(pb, 0, 0, "IN " .. tostring(math.floor(in_x)) .. "," .. tostring(math.floor(in_y)), "white") 
 	end
 
 	-- check if this is a larger axis value than we've gotten before
-	if x > max_pos_axis_x then
-		max_pos_axis_x = x
-	elseif x < max_neg_axis_x then
-		max_neg_axis_x = x
+	if in_x > max_pos_axis_x then
+		max_pos_axis_x = in_x
+	elseif in_x < max_neg_axis_x then
+		max_neg_axis_x = in_x
 	end
 
-	if y > max_pos_axis_y then
-		max_pos_axis_y = y
-	elseif y < max_neg_axis_y then
-		max_neg_axis_y = y
+	if in_y > max_pos_axis_y then
+		max_pos_axis_y = in_y
+	elseif in_y < max_neg_axis_y then
+		max_neg_axis_y = in_y
 	end
 
 	-- scale movement to our known axis lengths
 	-- (in other words: 100% of axis = 100% of radius, 50% of axis = 50% of radius etc.)
-	if x > 0 then
-		x = x * (radius/max_pos_axis_x)
-	elseif x < 0 then
-		x = x * (radius/-max_neg_axis_x)
+	if in_x > 0 then
+		out_x = in_x * (radius/max_pos_axis_x)
+	elseif in_x < 0 then
+		out_x = in_x * (radius/-max_neg_axis_x)
 	end
-	if y > 0 then
-		y = y * (radius/max_pos_axis_y)
-	elseif y < 0 then
-		y = y * (radius/-max_neg_axis_y)
+	if in_y > 0 then
+		out_y = in_y * (radius/max_pos_axis_y)
+	elseif in_y < 0 then
+		out_y = in_y * (radius/-max_neg_axis_y)
 	end
 
 	-- make sure we are inside the containing circle (hypotenuse ("magnitude") of triangle x,y cannot be larger than radius)
 	-- inspiration from http://blog.hypersect.com/interpreting-analog-sticks/
-	magnitude = math.sqrt((x^2) + (y^2))
+	magnitude = math.sqrt((out_x^2) + (out_y^2))
 	if magnitude > radius then
 		scale = radius/magnitude
-		x = x * scale
-		y = y * scale
+		out_x = out_x * scale
+		out_y = out_y * scale
 	end
 
 	-- add center offset (so neutral stick rests at the center and not 0,0 etc)
 	-- also invert y because less y is more up, and more y is more down in our window
-	x = x + center_x
-	y = (-y) + center_y
+	out_x = out_x + center_x
+	out_y = (-out_y) + center_y
 
 	-- draw containing circle
 	forms.drawEllipse(pb, top_corner_x, top_corner_y, size, size, "gray")
 	
 	if debug_stick then -- print all the debug info
-		forms.drawString(pb, 90, 0, "OUT " .. tostring(math.floor(x)) .. "," .. tostring(math.floor(y)), "white") 
+		forms.drawString(pb, 90, 0, "OUT " .. tostring(math.floor(out_x)) .. "," .. tostring(math.floor(out_y)), "white") 
 		forms.drawString(pb, 0, 90, "MAG: " .. tostring(magnitude), "yellow")
-		forms.drawLine(pb, center_x, center_y, x, y, "yellow") -- hypotenuse or magnitude
-		forms.drawLine(pb, center_x, center_y, x, center_y)
-		forms.drawLine(pb, x, y, x, center_y)
+		forms.drawLine(pb, center_x, center_y, out_x, out_y, "yellow") -- hypotenuse or magnitude
+		forms.drawLine(pb, center_x, center_y, out_x, center_y)
+		forms.drawLine(pb, out_x, out_y, out_x, center_y)
 	else -- use the big stick if not debugging (its kinda in the way)
-		forms.drawEllipse(pb, x-stick_cap_size, y-stick_cap_size, stick_cap_size*2, stick_cap_size*2, "gray", "gray") -- stick cap
-		forms.drawPixel(pb, x, y, "black") -- actual stick coordinate (black pixel in the middle)
+		forms.drawEllipse(pb, out_x-stick_cap_size, out_y-stick_cap_size, stick_cap_size*2, stick_cap_size*2, "gray", "gray") -- stick cap
+		forms.drawPixel(pb, out_x, out_y, "black") -- actual stick coordinate (black pixel in the middle)
 	end
 
 end
