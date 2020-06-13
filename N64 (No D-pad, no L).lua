@@ -1,6 +1,12 @@
+-- settings
 controller_port = 1 -- which controller
 debug_stick = false -- useful for debugging, shows x y coords and pythagorean theorem triangle etc
 show_grid = false -- draw a 10x10 pixel grid, useful for placing buttons
+-- visual settings
+containing_circle = true -- show a circle surrounding the joystick
+stick_line = false -- visualize the stick as a line
+stick_cap = true -- show the "thumb cap"
+-- end of settings
 
 forms.destroyall() -- close all Lua windows. this is probably mean to do because i think it closes other Lua scripts' windows too?
 
@@ -20,7 +26,7 @@ function update_stick(in_x, in_y)
 	top_corner_y = 20
 	size = 64
 	radius = (size/2)
-	stick_cap_size = (size/4)
+	stick_cap_size = (size/5)
 
 	-- center of the containing circle
 	center_x = top_corner_x + radius
@@ -74,7 +80,31 @@ function update_stick(in_x, in_y)
 	out_y = (-out_y) + center_y
 
 	-- draw containing circle
-	forms.drawEllipse(pb, top_corner_x, top_corner_y, size, size, "gray")
+	if containing_circle then
+		forms.drawEllipse(pb, top_corner_x, top_corner_y, size, size, "gray")
+	end
+
+	if stick_line then
+		if in_x == 0 and in_y == 0 then
+			-- just put a blob in the middle
+			forms.drawPixel(pb, out_x, out_y) -- center
+			forms.drawPixel(pb, out_x, out_y-1) -- up
+			forms.drawPixel(pb, out_x, out_y+1) -- down
+			forms.drawPixel(pb, out_x-1, out_y) -- left
+			forms.drawPixel(pb, out_x+1, out_y) -- right
+		else
+			forms.drawLine(pb, center_x, center_y, out_x, out_y) -- center
+			forms.drawLine(pb, center_x, center_y-1, out_x, out_y-1) -- up
+			forms.drawLine(pb, center_x, center_y+1, out_x, out_y+1) -- down
+			forms.drawLine(pb, center_x-1, center_y, out_x-1, out_y) -- left
+			forms.drawLine(pb, center_x+1, center_y, out_x+1, out_y) -- right
+		end
+	end
+
+	if stick_cap then
+		forms.drawEllipse(pb, out_x-stick_cap_size, out_y-stick_cap_size, stick_cap_size*2, stick_cap_size*2, "gray", "gray") -- stick cap
+		forms.drawPixel(pb, out_x, out_y, "black") -- actual stick coordinate (black pixel in the middle)
+	end
 	
 	if debug_stick then -- print all the debug info
 		forms.drawString(pb, 90, 0, "OUT " .. tostring(math.floor(out_x)) .. "," .. tostring(math.floor(out_y)), "white") 
@@ -82,9 +112,6 @@ function update_stick(in_x, in_y)
 		forms.drawLine(pb, center_x, center_y, out_x, out_y, "yellow") -- hypotenuse or magnitude
 		forms.drawLine(pb, center_x, center_y, out_x, center_y)
 		forms.drawLine(pb, out_x, out_y, out_x, center_y)
-	else -- use the big stick if not debugging (its kinda in the way)
-		forms.drawEllipse(pb, out_x-stick_cap_size, out_y-stick_cap_size, stick_cap_size*2, stick_cap_size*2, "gray", "gray") -- stick cap
-		forms.drawPixel(pb, out_x, out_y, "black") -- actual stick coordinate (black pixel in the middle)
 	end
 
 end
